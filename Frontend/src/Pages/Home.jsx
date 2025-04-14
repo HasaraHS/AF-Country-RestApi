@@ -26,21 +26,21 @@ const App = () => {
   }, []);
 
   return (
-    <div className="flex flex-row flex-1/3 justify-between items-center ">
+    <div className="flex justify-between  ">
       <div
-        style={{
-        //   display: "flex",
-        //   flexDirection: "column",
-          alignItems: "center",
-          marginTop: "20px",
-        }}
+        // style={{
+        // //   display: "flex",
+        // //   flexDirection: "column",
+        //   alignItems: "center",
+        //   marginTop: "20px",
+        // }}
       >
         <div
-          style={{
-            // display: "flex",
-            flexWrap: "wrap",
-            justifyContent: "center",
-          }}
+        //   style={{
+        //     // display: "flex",
+        //     flexWrap: "wrap",
+        //     justifyContent: "center",
+        //   }}
         >
           {places.map((place, index) => (
             <div key={index} style={cardStyle}>
@@ -55,9 +55,10 @@ const App = () => {
           ))}
         </div>
 
-        <div className="flex flex-2/3 " />
+        <div className="flex flex-2/3 " >
         <WorldGlobe />
       </div>
+    </div>
     </div>
   );
 };
