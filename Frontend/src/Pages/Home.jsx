@@ -1,6 +1,4 @@
 import React, { useEffect, useState } from "react";
-import Globe from "react-globe.gl";
-import WorldGlobe from "../Components/WorldGlobe";
 
 const App = () => {
   const [places, setPlaces] = useState([]);
@@ -20,27 +18,27 @@ const App = () => {
             countryName: country.name.common, // The common country name
           }));
 
-        setPlaces(placesData); // Set the extracted data to the state
+        setPlaces(placesData); 
       })
       .catch((err) => console.error("Failed to fetch places:", err));
   }, []);
 
   return (
-    <div className="flex justify-between  ">
+    <div className="flex  ">
       <div
-        // style={{
-        // //   display: "flex",
-        // //   flexDirection: "column",
-        //   alignItems: "center",
-        //   marginTop: "20px",
-        // }}
+        style={{
+          display: "flex",
+          flexDirection: "column",
+          alignItems: "center",
+          marginTop: "20px",
+        }}
       >
         <div
-        //   style={{
-        //     // display: "flex",
-        //     flexWrap: "wrap",
-        //     justifyContent: "center",
-        //   }}
+          style={{
+            display: "flex",
+            flexWrap: "wrap",
+            justifyContent: "center",
+          }}
         >
           {places.map((place, index) => (
             <div key={index} style={cardStyle}>
@@ -54,10 +52,6 @@ const App = () => {
             </div>
           ))}
         </div>
-
-        <div className="flex flex-2/3 " >
-        <WorldGlobe />
-      </div>
     </div>
     </div>
   );

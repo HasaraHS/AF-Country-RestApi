@@ -1,9 +1,10 @@
 import React, { useEffect, useRef, useState } from "react";
 import Globe from "react-globe.gl";
+import Home from "../Pages/Home"; // Import your Home component
 
 const App = () => {
   const [hexData, setHexData] = useState([]);
-  const [isFullWidth, setIsFullWidth] = useState(false); // toggle state
+  const [isFullWidth, setIsFullWidth] = useState(false);
   const globeRef = useRef();
 
   useEffect(() => {
@@ -13,10 +14,9 @@ const App = () => {
       .catch((err) => console.error("Failed to fetch data:", err));
   }, []);
 
-  // Optional: Add rotation
   useEffect(() => {
     let animationFrameId;
-    const speed = 0.3;
+    const speed = 0.05;
 
     const rotate = () => {
       if (globeRef.current) {
@@ -31,56 +31,72 @@ const App = () => {
   }, []);
 
   return (
-    <div
-      style={{
-        width: isFullWidth ? "100vw" : "50vw",
-        height: "100vh",
-        margin: 0,
-        display: "flex",
-        justifyContent: "end",
-        backgroundImage:
-          "url('//cdn.jsdelivr.net/npm/three-globe/example/img/night-sky.png')",
-        backgroundSize: "cover",
-        backgroundPosition: "center",
-        transition: "width 0.5s ease-in-out", // smooth transition
-        position: "relative",
-      }}
-    >
-      {/* Toggle Button */}
-      <button
-        onClick={() => setIsFullWidth(!isFullWidth)}
+    <div style={{ display: "flex", width: "100vw", height: "100vh" }}>
+      {/* Left Side: Render Home only when globe is not full screen */}
+      {!isFullWidth && (
+        <div
+          style={{
+            width: "50vw",
+            height: "100vh",
+            backgroundColor: "#1a1a1a", // optional styling
+            overflow: "auto",
+          }}
+        >
+          <Home />
+        </div>
+      )}
+
+      {/* Right Side: Globe */}
+      <div
         style={{
-          position: "absolute",
-          left: "20px",
-          top: "20px",
-          zIndex: 10,
-          padding: "10px 15px",
-          backgroundColor: "white",
-          border: "none",
-          borderRadius: "5px",
-          cursor: "pointer",
-          fontWeight: "bold",
+          width: isFullWidth ? "100vw" : "50vw",
+          height: "100vh",
+          display: "flex",
+          justifyContent: "flex-end",
+          alignItems: "center",
+          backgroundImage:
+            "url('//cdn.jsdelivr.net/npm/three-globe/example/img/night-sky.png')",
+          backgroundSize: "cover",
+          backgroundPosition: "center",
+          transition: "width 0.5s ease-in-out",
+          position: "relative",
         }}
       >
-        {isFullWidth ? "Shrink Globe" : "Expand Globe"}
-      </button>
+        {/* Toggle Button */}
+        <button
+          onClick={() => setIsFullWidth(!isFullWidth)}
+          style={{
+            position: "absolute",
+            left: "200px",
+            top: "200px",
+            zIndex: 10,
+            padding: "10px 15px",
+            backgroundColor: "white",
+            border: "none",
+            borderRadius: "5px",
+            cursor: "pointer",
+            fontWeight: "bold",
+          }}
+        >
+          {isFullWidth ? "Shrink Globe" : "Expand Globe"}
+        </button>
 
-      {/* Globe */}
-      <div style={{ width: "50%", height: "100%" }}>
-        <Globe
-          ref={globeRef}
-          globeImageUrl="//cdn.jsdelivr.net/npm/three-globe/example/img/earth-night.jpg"
-          backgroundImageUrl="//cdn.jsdelivr.net/npm/three-globe/example/img/night-sky.png"
-          hexPolygonsData={hexData}
-          hexPolygonResolution={3}
-          hexPolygonMargin={0.3}
-          hexPolygonUseDots={true}
-          hexPolygonColor={() =>
-            `#${Math.floor(Math.random() * 16777215)
-              .toString(16)
-              .padStart(6, "0")}`
-          }
-        />
+        <div style={{ width: "100%", height: "100%" }}>
+          <Globe
+            ref={globeRef}
+            globeImageUrl="//cdn.jsdelivr.net/npm/three-globe/example/img/earth-night.jpg"
+            backgroundImageUrl="//cdn.jsdelivr.net/npm/three-globe/example/img/night-sky.png"
+            hexPolygonsData={hexData}
+            hexPolygonResolution={3}
+            hexPolygonMargin={0.3}
+            hexPolygonUseDots={true}
+            hexPolygonColor={() =>
+              `#${Math.floor(Math.random() * 16777215)
+                .toString(16)
+                .padStart(6, "0")}`
+            }
+          />
+        </div>
       </div>
     </div>
   );
