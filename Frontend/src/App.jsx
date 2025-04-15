@@ -2,7 +2,7 @@ import React from "react";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import WorldGlobe from "./Components/WorldGlobe";
 import Home from "./Pages/Home";
-import Threee from './Pages/Threee'
+import ThreeDesign2 from './Components/ThreeDesign2'
 
 const App = () => {
   return (
@@ -10,7 +10,7 @@ const App = () => {
       <Routes>
         <Route path="/globe" element={<WorldGlobe />} />
         <Route path="/" element={<Home/>} />
-        <Route path="/three" element={<Threee/>} />
+        <Route path="/Design-2" element={<ThreeDesign2/>} />
       </Routes>
     </BrowserRouter>
   );
