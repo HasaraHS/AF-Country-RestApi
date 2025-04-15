@@ -24,7 +24,7 @@ const App = () => {
   }, []);
 
   return (
-    <div className="flex  ">
+    <div className="flex ">
       <div
         style={{
           display: "flex",
