@@ -4,6 +4,7 @@ import WorldGlobe from "./Components/WorldGlobe";
 import Home from "./Pages/Home";
 import ThreeDesign2 from './Components/ThreeDesign2'
 import Test from "./Pages/Test";
+import OneCard from "./Pages/OneCard";
 
 const App = () => {
   return (
@@ -13,6 +14,7 @@ const App = () => {
         <Route path="/" element={<Home/>} />
         <Route path="/Design-2" element={<ThreeDesign2/>} />
         <Route path="/test" element={< Test />} />
+        <Route path="/test/:id" element={< OneCard />} />
       </Routes>
     </BrowserRouter>
   );

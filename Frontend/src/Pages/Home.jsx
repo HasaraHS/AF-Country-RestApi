@@ -3,19 +3,18 @@ import React, { useEffect, useState } from "react";
 const App = () => {
   const [places, setPlaces] = useState([]);
 
+  // Fetch data from the restcountries API
   useEffect(() => {
-    // Fetch data from the restcountries API
     fetch("https://restcountries.com/v3.1/all")
       .then((res) => res.json())
       .then((data) => {
-        // Extract capital cities and coordinates (or other relevant data)
         const placesData = data
-          .filter((country) => country.capital) // Only include countries with a capital
+          .filter((country) => country.capital) 
           .map((country) => ({
-            name: country.capital[0], // Get the first capital if there are multiple
-            lat: country.latlng ? country.latlng[0] : 0, // If latlng is available, use it, otherwise default to 0
-            lng: country.latlng ? country.latlng[1] : 0, // Same for longitude
-            countryName: country.name.common, // The common country name
+            name: country.capital[0], 
+            lat: country.latlng ? country.latlng[0] : 0, 
+            lng: country.latlng ? country.latlng[1] : 0, 
+            countryName: country.name.common, 
           }));
 
         setPlaces(placesData); 

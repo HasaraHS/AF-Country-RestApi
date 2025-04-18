@@ -82,7 +82,7 @@ const App = () => {
         </button>
 
         <div style={{ width: "90%", height: "100%" }}>
-          <Globe
+          {/* <Globe
             ref={globeRef}
             globeImageUrl="//cdn.jsdelivr.net/npm/three-globe/example/img/earth-night.jpg"
             backgroundImageUrl="//cdn.jsdelivr.net/npm/three-globe/example/img/night-sky.png"
@@ -95,7 +95,7 @@ const App = () => {
                 .toString(16)
                 .padStart(6, "0")}`
             }
-          />
+          /> */}
         </div>
 
         <div
