@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import Card from '../Components/Card';
+import ThreeDesign2 from '../Components/ThreeDesign2'
 
 
 const Test = () => {
@@ -16,7 +17,8 @@ const Test = () => {
 
   return (
     <div>
-      <Card datas={datas}/>
+      {/* <Card datas={datas}/> */}
+      <ThreeDesign2 datas={datas}/>
     </div>
   )
 }

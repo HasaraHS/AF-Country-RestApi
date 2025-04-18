@@ -2,7 +2,7 @@ import React from "react";
 
 import { useNavigate } from "react-router-dom";
 
-const Card = (props) => {
+const Card = ( props ) => {
   const navigate = useNavigate();
 
   const handleClick = (id) => {
@@ -10,6 +10,8 @@ const Card = (props) => {
   };
 
   const datas = props.datas;
+  console.log(datas)
+
   return (
     <div className="flex flex-wrap">
       {datas.map((country) => (

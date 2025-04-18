@@ -1,11 +1,23 @@
 import React, { useEffect, useRef, useState } from "react";
 import Globe from "react-globe.gl";
-import Home from "../Pages/Home"; // Import your Home component
+import Home from "../Pages/Home"; 
+import Card from "./Card";
 
-const App = () => {
+const ThreeDesign2 = () => {
   const [hexData, setHexData] = useState([]);
+  const [datas, setData] = useState([]);
   const [isFullWidth, setIsFullWidth] = useState(true);
   const globeRef = useRef();
+
+  //Fetching Country datas
+  useEffect(() => {
+    const fetchContries = async () => {
+      const response = await fetch("https://restcountries.com/v3.1/all");
+      const data = await response.json();
+      setData(data);
+    };
+    fetchContries();
+  }, []);
 
   useEffect(() => {
     fetch("/dataset/ne_110m_admin_0_countries.geojson")
@@ -30,6 +42,7 @@ const App = () => {
     return () => cancelAnimationFrame(animationFrameId);
   }, []);
 
+
   return (
     <div style={{ display: "flex", width: "100vw", height: "100vh" }}>
       {/* Left Side: Render Home only when globe is not full screen */}
@@ -42,7 +55,8 @@ const App = () => {
             overflow: "auto",
           }}
         >
-          <Home />
+          {/* <Home /> */}
+          <Card datas={datas} />
         </div>
       )}
 
@@ -126,4 +140,4 @@ const App = () => {
   );
 };
 
-export default App;
+export default ThreeDesign2;
