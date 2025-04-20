@@ -51,7 +51,7 @@ const ThreeDesign2 = () => {
           style={{
             width: "50vw",
             height: "100vh",
-            backgroundColor: "#1a1a1a", // optional styling
+            backgroundColor: "#1a1a1a", // optional styling #1a1a1a
             overflow: "auto",
           }}
         >

@@ -15,7 +15,7 @@ const Card = ( props ) => {
   return (
     <div className="flex flex-wrap">
       {datas.map((country) => (
-  <div key={country.cca3} className="w-1/4 p-4">
+  <div key={country.cca3} className="w-1/3 p-4">
     <div className="bg-white shadow rounded p-4">
       <img src={country.flags.png} alt={country.name.common} className="w-full h-32 object-cover" />
       <h2 className="text-lg font-bold mt-2">{country.name.common}</h2>
