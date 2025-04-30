@@ -2,5 +2,5 @@
 
 
 Threejs globe
-Google Auth
+Google Auth - npm i @react-oauth/google , npm i jwt-decode
 
