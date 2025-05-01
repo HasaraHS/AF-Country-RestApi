@@ -1,8 +1,10 @@
 import React, { useEffect, useRef, useState } from "react";
+import { GoogleLogin } from "@react-oauth/google";
+import { jwtDecode } from "jwt-decode";
 import Globe from "react-globe.gl";
 import Card from "../Components/Card";
 
-const ThreeDesign2 = () => {
+const Home = () => {
   const [hexData, setHexData] = useState([]);
   const [datas, setData] = useState([]);
   const [isFullWidth, setIsFullWidth] = useState(true);
@@ -41,7 +43,6 @@ const ThreeDesign2 = () => {
     return () => cancelAnimationFrame(animationFrameId);
   }, []);
 
-
   return (
     <div style={{ display: "flex", width: "100vw", height: "100vh" }}>
       {/* Left Side: Render Home only when globe is not full screen */}
@@ -55,7 +56,54 @@ const ThreeDesign2 = () => {
           }}
         >
           {/* <Home /> */}
-          <Card datas={datas} />
+          <div>
+            <div className="bg-white flex items-center justify-between p-4">
+              {/* Search bar */}
+              <div className="relative w-full max-w-sm">
+                <input
+                  type="text"
+                  placeholder="Search..."
+                  className="w-full py-2 pl-10 pr-4 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-400"
+                />
+                <div className="absolute left-3 top-2.5 text-gray-400">
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    className="h-5 w-5"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth="2"
+                      d="M21 21l-4.35-4.35M16.65 16.65A7.5 7.5 0 1116.65 2a7.5 7.5 0 010 15z"
+                    />
+                  </svg>
+                </div>
+                <button className="absolute right-1 top-1 bottom-1 px-4 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-all">
+                  Search
+                </button>
+              </div>
+
+              {/* Login Button */}
+              <div className="flex justify-end">
+                <GoogleLogin
+                  onSuccess={(credentialResponse) => {
+                    const token = credentialResponse.credential;
+                    const decoded = jwtDecode(token);
+
+                    console.log("Decoded User Info:", decoded);
+                    console.log("Raw Credential Response:", credentialResponse);
+                  }}
+                  onError={() => {
+                    console.log("Login Failed");
+                  }}
+                />
+              </div>
+            </div>
+            <Card datas={datas} />
+          </div>
         </div>
       )}
 
@@ -139,4 +187,4 @@ const ThreeDesign2 = () => {
   );
 };
 
-export default ThreeDesign2;
+export default Home;
