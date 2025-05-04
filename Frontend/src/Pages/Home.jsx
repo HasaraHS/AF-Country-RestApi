@@ -15,11 +15,12 @@ const Home = () => {
   const [languageFilter, setLanguageFilter] = useState("");
 
   const regions = [...new Set(datas.map((c) => c.region).filter(Boolean))];
-  const languages = [
-    ...new Set(
-      datas.flatMap((c) => Object.values(c.language || {})).filter(Boolean)
-    ),
-  ];
+  const languages = Array.from(
+    new Set(
+      datas.flatMap((country) => Object.values(country.languages || {}))
+    )
+  );
+  
 
   const filteredCountries = datas.filter((country) => {
     const matchesSearch = country.name.common
