@@ -10,6 +10,29 @@ const Home = () => {
   const [isFullWidth, setIsFullWidth] = useState(true);
   const globeRef = useRef();
 
+  const [searchTerm, setSearchTerm] = useState("");
+  const [regionFilter, setRegionFilter] = useState("");
+  const [languageFilter, setLanguageFilter] = useState("");
+
+  const regions = [...new Set(datas.map((c) => c.region).filter(Boolean))];
+  const languages = [
+    ...new Set(
+      datas.flatMap((c) => Object.values(c.language || {})).filter(Boolean)
+    ),
+  ];
+
+  const filteredCountries = datas.filter((country) => {
+    const matchesSearch = country.name.common
+      .toLowerCase()
+      .includes(searchTerm.toLowerCase());
+    const matchesRegion = regionFilter ? country.region === regionFilter : true;
+    const matchesLanguage = languageFilter
+      ? Object.values(country.languages || {}).includes(languageFilter)
+      : true;
+
+    return matchesSearch && matchesRegion && matchesLanguage;
+  });
+
   //Fetching Country datas
   useEffect(() => {
     const fetchContries = async () => {
@@ -57,52 +80,56 @@ const Home = () => {
         >
           {/* <Home /> */}
           <div>
-            <div className="bg-white flex items-center justify-between p-4">
+            <div className="bg-white flex items-center justify-between gap-4 p-4 flex-wrap">
               {/* Search bar */}
-              <div className="relative w-full max-w-sm">
-                <input
-                  type="text"
-                  placeholder="Search..."
-                  className="w-full py-2 pl-10 pr-4 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-400"
-                />
-                <div className="absolute left-3 top-2.5 text-gray-400">
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    className="h-5 w-5"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke="currentColor"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth="2"
-                      d="M21 21l-4.35-4.35M16.65 16.65A7.5 7.5 0 1116.65 2a7.5 7.5 0 010 15z"
-                    />
-                  </svg>
-                </div>
-                <button className="absolute right-1 top-1 bottom-1 px-4 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-all">
-                  Search
-                </button>
-              </div>
+              <input
+                type="text"
+                placeholder="Search by country..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                className="py-2 px-3 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-400"
+              />
+
+              {/* Region filter */}
+              <select
+                value={regionFilter}
+                onChange={(e) => setRegionFilter(e.target.value)}
+                className="py-2 px-3 border border-gray-300 rounded-lg shadow-sm"
+              >
+                <option value="">All Regions</option>
+                {regions.map((region) => (
+                  <option key={region} value={region}>
+                    {region}
+                  </option>
+                ))}
+              </select>
+
+              {/* Language filter */}
+              <select
+                value={languageFilter}
+                onChange={(e) => setLanguageFilter(e.target.value)}
+                className="py-2 px-3 border border-gray-300 rounded-lg shadow-sm"
+              >
+                <option value="">All Languages</option>
+                {languages.map((lang) => (
+                  <option key={lang} value={lang}>
+                    {lang}
+                  </option>
+                ))}
+              </select>
 
               {/* Login Button */}
-              <div className="flex justify-end">
-                <GoogleLogin
-                  onSuccess={(credentialResponse) => {
-                    const token = credentialResponse.credential;
-                    const decoded = jwtDecode(token);
-
-                    console.log("Decoded User Info:", decoded);
-                    console.log("Raw Credential Response:", credentialResponse);
-                  }}
-                  onError={() => {
-                    console.log("Login Failed");
-                  }}
-                />
-              </div>
+              <GoogleLogin
+                onSuccess={(credentialResponse) => {
+                  const token = credentialResponse.credential;
+                  const decoded = jwtDecode(token);
+                  console.log("Decoded User Info:", decoded);
+                }}
+                onError={() => console.log("Login Failed")}
+              />
             </div>
-            <Card datas={datas} />
+
+            <Card datas={filteredCountries} />
           </div>
         </div>
       )}
