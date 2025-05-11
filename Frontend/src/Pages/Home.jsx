@@ -45,7 +45,7 @@ const Home = () => {
   }, []);
 
   useEffect(() => {
-    fetch("https://af-country-rest-api-pepl.vercel.app/dataset/ne_110m_admin_0_countries.geojson")
+    fetch("https://af-country-rest-api-pepl.vercel.app/Data/dataset/ne_110m_admin_0_countries.geojson")
       .then((res) => res.json())
       .then(({ features }) => setHexData(features))
       .catch((err) => console.error("Failed to fetch data:", err));
