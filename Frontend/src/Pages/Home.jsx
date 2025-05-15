@@ -20,8 +20,22 @@ const Home = () => {
       datas.flatMap((country) => Object.values(country.languages || {}))
     )
   );
+
+
+
+  // fetch country by Name
+  const fetchCountryByName = async ( name ) => {
+    try{
+      const res = await fetch(`https://restcountries.com/v3.1/name/${name}`);
+      const data = await res.json()
+      console.log("by name" , data)
+    }catch(error){
+      console.error("error fetching countries by name" , error)
+    }
+  }
   
 
+  
   const filteredCountries = datas.filter((country) => {
     const matchesSearch = country.name.common
       .toLowerCase()
@@ -68,6 +82,8 @@ const Home = () => {
   }, []);
 
   return (
+
+    
     <div style={{ display: "flex", width: "100vw", height: "100vh" }}>
       {/* Left Side: Render Home only when globe is not full screen */}
       {!isFullWidth && (
@@ -129,11 +145,19 @@ const Home = () => {
                 onError={() => console.log("Login Failed")}
               />
             </div>
-
+            
             <Card datas={filteredCountries} />
           </div>
+          
         </div>
       )}
+     
+  <button
+    className="bg-blue-600 text-white px-3 py-1 rounded"
+    onClick={() => fetchCountryByName("Japan")}
+  >
+    Search Japan
+  </button>
 
       {/* Right Side: Globe */}
       <div
@@ -171,7 +195,7 @@ const Home = () => {
         </button>
 
         <div style={{ width: "90%", height: "100%" }}>
-          <Globe
+          {/* <Globe
             ref={globeRef}
             globeImageUrl="//cdn.jsdelivr.net/npm/three-globe/example/img/earth-night.jpg"
             backgroundImageUrl="//cdn.jsdelivr.net/npm/three-globe/example/img/night-sky.png"
@@ -184,7 +208,7 @@ const Home = () => {
                 .toString(16)
                 .padStart(6, "0")}`
             }
-          />
+          /> */}
         </div>
 
         <div
