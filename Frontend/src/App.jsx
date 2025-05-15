@@ -12,7 +12,6 @@ const App = () => {
       <Routes>
         <Route path="/globe" element={<WorldGlobe />} />
         <Route path="/" element={<Home/>} />
-        <Route path="/test" element={<Test2/>} />
         <Route path="/login" element={<Login/>} />
       </Routes>
     </BrowserRouter>

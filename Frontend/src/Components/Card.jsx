@@ -4,34 +4,30 @@ const Card = ({ datas }) => {
   const [selectedCountry, setSelectedCountry] = useState(null);
 
   return (
-    <div className="p-4 flex flex-wrap gap-4 justify-between bg-[#7E7BC5]">
+    <div className="p-6 grid grid-cols-1 sm:grid-cols-2   gap-6 bg-[#7E7BC5] min-h-screen">
       {datas.map((country, index) => (
         <div
           key={index}
           onClick={() => setSelectedCountry(country)}
-          className="cursor-pointer bg-[#FCFCFC] rounded-xl shadow-lg w-[300px] hover:shadow-2xl transition duration-300"
+          className="cursor-pointer bg-white rounded-xl shadow-lg hover:shadow-2xl transition duration-300 overflow-hidden"
         >
-          <div className="flex">
-            {/* Flag Image on the Left */}
-            <img
-              src={country.flags.png}
-              alt={country.name.common}
-              className="w-35 h-auto object-cover rounded-l-xl"
-            />
+          {/* Flag Image on Top */}
+          <img
+            src={country.flags?.png}
+            alt={country.name.common}
+            className="w-full h-40 object-cover"
+          />
 
-            {/* Info in 2-column grid */}
-            <div className="p-4 grid grid-cols-2 gap-2 text-sm w-full">
-              <div className="col-span-2 font-bold text-lg text-[#4B4B4B]">
-                {country.name.common}
-              </div>
-              <div className="text-gray-700 font-medium">Region:</div>
-              <div className="text-gray-600 ">{country.region}</div>
-              <div className="text-gray-700 font-medium">Languages:</div>
-              <div className="text-gray-600">
-                {country.languages
-                  ? Object.values(country.languages).join(", ")
-                  : "N/A"}
-              </div>
+          {/* Country Info */}
+          <div className="p-4">
+            <h3 className="text-xl font-semibold text-[#4B4B4B] mb-2">
+              {country.name.common}
+            </h3>
+            <div className="text-sm text-gray-700 space-y-1">
+              <p><strong>Region:</strong> {country.region}</p>
+              <p><strong>Languages:</strong>{" "}
+                {country.languages ? Object.values(country.languages).join(", ") : "N/A"}
+              </p>
             </div>
           </div>
         </div>
