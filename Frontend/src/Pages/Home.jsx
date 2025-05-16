@@ -1,6 +1,7 @@
 import React, { useEffect, useRef, useState } from "react";
 import { GoogleLogin } from "@react-oauth/google";
 import { jwtDecode } from "jwt-decode";
+
 import Globe from "react-globe.gl";
 import Card from "../Components/Card";
 
@@ -8,53 +9,116 @@ const Home = () => {
   const [hexData, setHexData] = useState([]);
   const [datas, setData] = useState([]);
   const [isFullWidth, setIsFullWidth] = useState(true);
-  const globeRef = useRef();
-
   const [searchTerm, setSearchTerm] = useState("");
   const [regionFilter, setRegionFilter] = useState("");
   const [languageFilter, setLanguageFilter] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
+  const globeRef = useRef();
 
-  const regions = [...new Set(datas.map((c) => c.region).filter(Boolean))];
-  const languages = Array.from(
-    new Set(
-      datas.flatMap((country) => Object.values(country.languages || {}))
+  const [allCountries, setAllCountries] = useState([]);
+
+  // Get unique language codes and map codes to names
+  const languageCodes = Array.from(
+    new Set(allCountries.flatMap((country) => Object.keys(country.languages || {})))
+  );
+  const languageNames = Object.fromEntries(
+    allCountries.flatMap((c) =>
+      Object.entries(c.languages || {}).map(([code, name]) => [code, name])
     )
   );
-  
 
-  const filteredCountries = datas.filter((country) => {
-    const matchesSearch = country.name.common
-      .toLowerCase()
-      .includes(searchTerm.toLowerCase());
-    const matchesRegion = regionFilter ? country.region === regionFilter : true;
-    const matchesLanguage = languageFilter
-      ? Object.values(country.languages || {}).includes(languageFilter)
-      : true;
-
-    return matchesSearch && matchesRegion && matchesLanguage;
-  });
-
-  //Fetching Country datas
-  useEffect(() => {
-    const fetchContries = async () => {
+  const fetchAllCountries = async () => {
+    try {
       const response = await fetch("https://restcountries.com/v3.1/all");
       const data = await response.json();
       setData(data);
-    };
-    fetchContries();
+      setAllCountries(data);
+    } catch (err) {
+      console.error("Failed to fetch all countries:", err);
+    }
+  };
+
+  const fetchCountryByName = async (name) => {
+    setLoading(true);
+    setError(null);
+    try {
+      const res = await fetch(`https://restcountries.com/v3.1/name/${name}`);
+      if (!res.ok) throw new Error("Country not found");
+      const data = await res.json();
+      setData(data);
+    } catch (error) {
+      setError("No country found.");
+      console.error("Error fetching countries by name:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Filtering logic on searchTerm, regionFilter, languageFilter, allCountries
+  useEffect(() => {
+    const timeout = setTimeout(() => {
+      const fetchFilteredCountries = async () => {
+        try {
+          setLoading(true);
+          setError(null);
+
+          if (searchTerm.trim() !== "") {
+            await fetchCountryByName(searchTerm);
+          } else if (regionFilter) {
+            const res = await fetch(`https://restcountries.com/v3.1/region/${regionFilter}`);
+            if (!res.ok) throw new Error("Failed to fetch by region");
+            const data = await res.json();
+
+            let filteredData = data;
+            if (languageFilter) {
+              filteredData = data.filter(
+                (c) =>
+                  c.languages &&
+                  Object.keys(c.languages).includes(languageFilter)
+              );
+            }
+
+            setData(filteredData);
+          } else if (languageFilter) {
+            const res = await fetch(`https://restcountries.com/v3.1/lang/${languageFilter}`);
+            if (!res.ok) throw new Error("Failed to fetch by language");
+            const data = await res.json();
+            setData(data);
+          } else {
+            setData(allCountries);
+          }
+        } catch (err) {
+          console.error("Filtering error:", err);
+          setError("No country found.");
+        } finally {
+          setLoading(false);
+        }
+      };
+
+      fetchFilteredCountries();
+    }, 500);
+
+    return () => clearTimeout(timeout);
+  }, [searchTerm, regionFilter, languageFilter, allCountries]);
+
+  useEffect(() => {
+    fetchAllCountries();
   }, []);
 
   useEffect(() => {
-    fetch("https://af-country-rest-api-pepl.vercel.app/Data/dataset/ne_110m_admin_0_countries.geojson")
+    fetch(
+      "https://af-country-rest-api-pepl.vercel.app/Data/dataset/ne_110m_admin_0_countries.geojson"
+    )
       .then((res) => res.json())
       .then(({ features }) => setHexData(features))
-      .catch((err) => console.error("Failed to fetch data:", err));
+      .catch((err) => console.error("Failed to fetch hex data:", err));
   }, []);
 
+  // Rotate the globe slowly
   useEffect(() => {
     let animationFrameId;
     const speed = 0.2;
-
     const rotate = () => {
       if (globeRef.current) {
         const { lat, lng, altitude } = globeRef.current.pointOfView();
@@ -62,41 +126,40 @@ const Home = () => {
       }
       animationFrameId = requestAnimationFrame(rotate);
     };
-
     rotate();
     return () => cancelAnimationFrame(animationFrameId);
   }, []);
 
+  const regions = Array.from(new Set(allCountries.map((c) => c.region).filter(Boolean)));
+
   return (
     <div style={{ display: "flex", width: "100vw", height: "100vh" }}>
-      {/* Left Side: Render Home only when globe is not full screen */}
       {!isFullWidth && (
         <div
           style={{
             width: "50vw",
             height: "100vh",
-            backgroundColor: "#1a1a1a", // optional styling #1a1a1a
+            backgroundColor: "#1a1a1a",
             overflow: "auto",
           }}
         >
-          {/* <Home /> */}
           <div>
-            <div className="bg-white flex items-center justify-between gap-4 p-4 flex-wrap">
-              {/* Search bar */}
+            <div
+              className="bg-[#161c1d] flex items-center gap-16 p-4">
               <input
                 type="text"
                 placeholder="Search by country..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className="py-2 px-3 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-400"
-              />
+                className="py-2 px-3 border border-gray-300 rounded-lg shadow-sm"
+                style={{ color: "white", backgroundColor: "#161c1d" }}/>
 
-              {/* Region filter */}
               <select
                 value={regionFilter}
                 onChange={(e) => setRegionFilter(e.target.value)}
                 className="py-2 px-3 border border-gray-300 rounded-lg shadow-sm"
-              >
+                 style={{ color: "white", backgroundColor: "#161c1d" }}>
+
                 <option value="">All Regions</option>
                 {regions.map((region) => (
                   <option key={region} value={region}>
@@ -105,37 +168,32 @@ const Home = () => {
                 ))}
               </select>
 
-              {/* Language filter */}
               <select
                 value={languageFilter}
                 onChange={(e) => setLanguageFilter(e.target.value)}
                 className="py-2 px-3 border border-gray-300 rounded-lg shadow-sm"
-              >
+                style={{ color: "white", backgroundColor: "#161c1d" }}>
+                  
                 <option value="">All Languages</option>
-                {languages.map((lang) => (
-                  <option key={lang} value={lang}>
-                    {lang}
+                {languageCodes.map((code) => (
+                  <option key={code} value={code}>
+                    {languageNames[code] || code}
                   </option>
                 ))}
               </select>
-
-              {/* Login Button */}
-              <GoogleLogin
-                onSuccess={(credentialResponse) => {
-                  const token = credentialResponse.credential;
-                  const decoded = jwtDecode(token);
-                  console.log("Decoded User Info:", decoded);
-                }}
-                onError={() => console.log("Login Failed")}
-              />
             </div>
 
-            <Card datas={filteredCountries} />
+            {loading && (
+              <p className="text-white text-center py-4">Loading...</p>
+            )}
+            {error && <p className="text-red-500 text-center py-4">{error}</p>}
+
+            <Card datas={datas} />
           </div>
         </div>
       )}
 
-      {/* Right Side: Globe */}
+      {/* Globe */}
       <div
         style={{
           width: isFullWidth ? "100vw" : "15vw",
@@ -151,13 +209,12 @@ const Home = () => {
           position: "relative",
         }}
       >
-        {/* Toggle Button */}
         <button
           onClick={() => setIsFullWidth(!isFullWidth)}
           style={{
             position: "absolute",
-            left: isFullWidth ? "118px" : "40px",
-            top: isFullWidth ? "600px" : "80px",
+            left: isFullWidth ? "110px" : "40px",
+            top: isFullWidth ? "570px" : "80px",
             zIndex: 10,
             padding: "10px 15px",
             backgroundColor: "white",
@@ -169,6 +226,28 @@ const Home = () => {
         >
           {isFullWidth ? "Shrink Globe" : "Expand Globe"}
         </button>
+
+        <div
+          style={{
+            position: "absolute",
+            left: isFullWidth ? "110px" : "40px",
+            top: isFullWidth ? "620px" : "130px",
+            zIndex: 5,
+            backgroundColor: "white",
+            borderRadius: "5px",
+            cursor: "pointer",
+            fontWeight: "bold",
+          }}
+        >
+          <GoogleLogin
+            onSuccess={(credentialResponse) => {
+              const token = credentialResponse.credential;
+              const decoded = jwtDecode(token);
+              console.log("Decoded User Info:", decoded);
+            }}
+            onError={() => console.log("Login Failed")}
+          />
+        </div>
 
         <div style={{ width: "90%", height: "100%" }}>
           <Globe
@@ -188,13 +267,14 @@ const Home = () => {
         </div>
 
         <div
-          className={`absolute text-white  font-extralight text-pretty ${
+          className={`absolute text-white font-extralight ${
             !isFullWidth ? "top-10 left-10 text-2xl" : "left-30 top-30 text-7xl"
           }`}
+          style={{ pointerEvents: "none" }}
         >
           GoFIND-WORLD
           <span
-            className={`mt-6 font-sans w-[400px] text-lg pl-1  ${
+            className={`mt-6 font-sans w-[400px] text-lg pl-1 ${
               !isFullWidth ? "hidden" : "block"
             }`}
           >
