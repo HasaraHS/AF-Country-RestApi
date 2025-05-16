@@ -1,8 +1,6 @@
 import React, { useState } from "react";
-import React, { useState } from "react";
 
-const Card = ({ datas }) => {
-  const [selectedCountry, setSelectedCountry] = useState(null);
+
 const Card = ({ datas }) => {
   const [selectedCountry, setSelectedCountry] = useState(null);
 
