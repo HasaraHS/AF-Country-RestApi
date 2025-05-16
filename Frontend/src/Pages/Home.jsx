@@ -133,6 +133,8 @@ const Home = () => {
   const regions = Array.from(new Set(allCountries.map((c) => c.region).filter(Boolean)));
 
   return (
+
+    
     <div style={{ display: "flex", width: "100vw", height: "100vh" }}>
       {!isFullWidth && (
         <div
@@ -190,6 +192,7 @@ const Home = () => {
 
             <Card datas={datas} />
           </div>
+          
         </div>
       )}
 
